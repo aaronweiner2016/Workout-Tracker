@@ -25,7 +25,13 @@ app.get('/exercise', (req, res) => res.sendFile(path.join(__dirname, './public/e
 
 
 app.get("/api/workouts", (req, res) => {
-  db.Workout.find({})
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      }
+    }
+  ])
     .then((found) => {
       res.json(found);
     })
@@ -75,14 +81,27 @@ app.post('/api/workouts', ({ body }, res) => {
 app.get('/api/workouts/range', (req, res) => {
   console.log("RANGEEE", req.body)
 
-  db.Workout.find({})
+  // db.Workout.find({})
+  //   .sort({ day: -1 })
+  //   .limit(7)
+  //   .then((found) => {
+  //     res.json(found);
+  //   })
+  //   .catch((error) => { console.log(error) })
+
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      }
+    }
+  ])
     .sort({ day: -1 })
     .limit(7)
     .then((found) => {
       res.json(found);
     })
     .catch((error) => { console.log(error) })
-
 });
 
 
