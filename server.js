@@ -1,22 +1,13 @@
 const express = require("express");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-const mongojs = require("mongojs");
 const path = require('path');
 
 
 const PORT = process.env.PORT || 3000;
 
-const databaseUrl = "workout";
-const collections = ["workouts"];
 
-const db = mongojs(databaseUrl, collections);
-
-db.on("error", error => {
-  console.log("Database Error:", error);
-});
-
-const workout = require("./models/index.js");
+const db = require("./models");
 const app = express();
 
 app.use(logger("dev"));
@@ -34,7 +25,7 @@ app.get('/exercise', (req, res) => res.sendFile(path.join(__dirname, './public/e
 
 
 app.get("/api/workouts", (req, res) => {
-  db.workouts.find({ read: true }, (error, found) => {
+  db.Workout.find((error, found) => {
     if (error) {
       console.log(error);
     } else {
@@ -44,21 +35,71 @@ app.get("/api/workouts", (req, res) => {
 
 })
 
-app.post('/api/workouts/:id', (req, res) => {
+app.put('/api/workouts/:id', (req, res) => {
+  // db.notes.update(
+  //   {
+  //     _id: mongojs.ObjectId(req.params.id)
+  //   },
+  //   {
+  //     $set: {
+  //       title: req.body.title,
+  //       note: req.body.note,
+  //       modified: Date.now()
+  //     }
+  //   },
+  //   (error, data) => {
+  //     if (error) {
+  //       res.send(error);
+  //     } else {
+  //       res.send(data);
+  //     }
+  //   }
+  // );
+});
+
+app.post('/api/workouts', (req, res) => {
+  // db.Workout.create(
+  //   [
+  //     {
+  //       $set: {
+  //         day: req.body.day,
+  //       }
+  //     },
+  //     {
+  //       $set: {
+  //         type: req.body.type,
+  //         name: req.body.name,
+  //         duration: req.body.duration,
+  //         weight: req.body.weight,
+  //         reps: req.body.reps,
+  //         sets: req.body.sets,
+  //       }
+  //     },
+  //     {
+  //       $set: {
+  //         type: req.body.type,
+  //         name: req.body.name,
+  //         duration: req.body.duration,
+  //         distance: req.body.distance,
+  //       }
+  //     }
+  //   ],
+  //   (error, data) => {
+  //     if (error) {
+  //       res.send(error);
+  //     } else {
+  //       res.send(data);
+  //     }
+  //   }
+  // );
+});
+
+app.get('/api/workouts/range', (req, res) => {
 
 });
 
-app.delete('/api/workouts', (req, res) => {
-
-});
-
-app.delete('/api/workouts/range', (req, res) => {
-
-});
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, './public/index.html')));
-
-
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
