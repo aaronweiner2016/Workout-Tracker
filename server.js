@@ -24,7 +24,7 @@ app.get('/stats', (req, res) => res.sendFile(path.join(__dirname, './public/stat
 app.get('/exercise', (req, res) => res.sendFile(path.join(__dirname, './public/exercise.html')));
 
 
-app.get("/api/workouts", ({ body }, res) => {
+app.get("/api/workouts", (req, res) => {
   db.Workout.find({})
     .then((found) => {
       res.json(found);
@@ -33,47 +33,32 @@ app.get("/api/workouts", ({ body }, res) => {
 
 })
 
-app.put('/api/workouts/:id', ({ body }, res) => {
+app.put('/api/workouts/:id', (req, res) => {
 
-  console.log(body)
+  console.log(req.body)
 
-  // const workout = new db.Workout(body);
-  // workout.setFullName();
-  // workout.lastUpdatedDate();
-
-  // workout.create(workout)
-  //   .then(dbworkout => {
-  //     res.json(dbworkout);
-  //   })
-  //   .catch(err => {
-  //     res.json(err);
-  //   });
-
-  // db.Workout.post(
-  //   {
-  //     _id: mongojs.ObjectId(req.params.id)
-  //   },
-  //   {
-  //     $set: {
-  //       title: req.body.title,
-  //       note: req.body.note,
-  //       modified: Date.now()
-  //     }
-  //   },
-  //   (error, data) => {
-  //     if (error) {
-  //       res.send(error);
-  //     } else {
-  //       res.send(data);
-  //     }
-  //   }
-  // );
+  db.Workout.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: {
+        exercises: {
+          ...req.body
+        }
+      }
+    },
+    (error, data) => {
+      if (error) {
+        res.send(error);
+      } else {
+        res.send(data);
+      }
+    }
+  );
 });
 
 app.post('/api/workouts', ({ body }, res) => {
-  console.log(body);
 
-  const workout = new db.Workout(body);
+  const workout = body;
   console.log("Workoutttttt", workout)
 
   db.Workout.create(workout)
@@ -84,43 +69,10 @@ app.post('/api/workouts', ({ body }, res) => {
     .catch(err => {
       res.json(err);
     });
-  // db.Workout.create(
-  //   [
-  //     {
-  //       $set: {
-  //         day: req.body.day,
-  //       }
-  //     },
-  //     {
-  //       $set: {
-  //         type: req.body.type,
-  //         name: req.body.name,
-  //         duration: req.body.duration,
-  //         weight: req.body.weight,
-  //         reps: req.body.reps,
-  //         sets: req.body.sets,
-  //       }
-  //     },
-  //     {
-  //       $set: {
-  //         type: req.body.type,
-  //         name: req.body.name,
-  //         duration: req.body.duration,
-  //         distance: req.body.distance,
-  //       }
-  //     }
-  //   ],
-  //   (error, data) => {
-  //     if (error) {
-  //       res.send(error);
-  //     } else {
-  //       res.send(data);
-  //     }
-  //   }
-  // );
+
 });
 
-app.get('/api/workouts/range', ({ body }, res) => {
+app.get('/api/workouts/range', (req, res) => {
   console.log("RANGEEE", body)
 });
 
