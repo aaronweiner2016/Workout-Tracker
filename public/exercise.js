@@ -150,7 +150,7 @@ if (workoutTypeSelect) {
 if (completeButton) {
   completeButton.addEventListener("click", function (event) {
     shouldNavigateAway = true;
-    handleFormSubmit(event);
+    Number(durationInput.value.trim()) && handleFormSubmit(event);
   });
 }
 if (addButton) {

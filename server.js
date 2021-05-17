@@ -73,7 +73,16 @@ app.post('/api/workouts', ({ body }, res) => {
 });
 
 app.get('/api/workouts/range', (req, res) => {
-  console.log("RANGEEE", body)
+  console.log("RANGEEE", req.body)
+
+  db.Workout.find({})
+    .sort({ day: -1 })
+    .limit(7)
+    .then((found) => {
+      res.json(found);
+    })
+    .catch((error) => { console.log(error) })
+
 });
 
 
