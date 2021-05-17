@@ -17,26 +17,39 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/userdb", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workoutdb", { useNewUrlParser: true });
 
 
 app.get('/stats', (req, res) => res.sendFile(path.join(__dirname, './public/stats.html')));
 app.get('/exercise', (req, res) => res.sendFile(path.join(__dirname, './public/exercise.html')));
 
 
-app.get("/api/workouts", (req, res) => {
-  db.Workout.find((error, found) => {
-    if (error) {
-      console.log(error);
-    } else {
+app.get("/api/workouts", ({ body }, res) => {
+  db.Workout.find({})
+    .then((found) => {
       res.json(found);
-    }
-  });
+    })
+    .catch((error) => { console.log(error) })
 
 })
 
-app.put('/api/workouts/:id', (req, res) => {
-  // db.notes.update(
+app.put('/api/workouts/:id', ({ body }, res) => {
+
+  console.log(body)
+
+  // const workout = new db.Workout(body);
+  // workout.setFullName();
+  // workout.lastUpdatedDate();
+
+  // workout.create(workout)
+  //   .then(dbworkout => {
+  //     res.json(dbworkout);
+  //   })
+  //   .catch(err => {
+  //     res.json(err);
+  //   });
+
+  // db.Workout.post(
   //   {
   //     _id: mongojs.ObjectId(req.params.id)
   //   },
@@ -57,7 +70,20 @@ app.put('/api/workouts/:id', (req, res) => {
   // );
 });
 
-app.post('/api/workouts', (req, res) => {
+app.post('/api/workouts', ({ body }, res) => {
+  console.log(body);
+
+  const workout = new db.Workout(body);
+  console.log("Workoutttttt", workout)
+
+  db.Workout.create(workout)
+    .then(dbUser => {
+      console.log("success")
+      res.json(dbUser);
+    })
+    .catch(err => {
+      res.json(err);
+    });
   // db.Workout.create(
   //   [
   //     {
@@ -94,8 +120,8 @@ app.post('/api/workouts', (req, res) => {
   // );
 });
 
-app.get('/api/workouts/range', (req, res) => {
-
+app.get('/api/workouts/range', ({ body }, res) => {
+  console.log("RANGEEE", body)
 });
 
 
